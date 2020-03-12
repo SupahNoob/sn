@@ -10,7 +10,6 @@ log = logging.getLogger(__name__)
 class LoopSmokeTester:
     """
     Measure performance of an event loop.
-
     Attributes
     ----------
     loop : asyncio.AbstractEventLoop
@@ -43,11 +42,9 @@ class LoopSmokeTester:
     async def count_active_tasks(self) -> int:
         """
         Total the number of unfinished tasks on the loop.
-
         Parameters
         ----------
         None
-
         Returns
         -------
         active_tasks : int
@@ -57,12 +54,10 @@ class LoopSmokeTester:
     async def measure_lag(self, interval: float=0.00) -> float:
         """
         Measure the lag time of the loop.
-
         Lag is defined as the difference between the intended and actual amount
         of time spend during this task. If the lag time is too much greater than
         the interval slept, we can say that there might be performance issues
         in the Event Loop.
-
         Parameters
         ----------
         check_interval : float, default 0.25

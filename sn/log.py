@@ -31,7 +31,7 @@ def basic_setup(
 ):
     """
     Applies some recommended logging principles.
-
+    
     A StreamHandler will be set up with the format being defined and the date
     format ommitting the actual date. StreamHandlers are typically used to get a
     quick understanding of how the program is performing, and if you've
@@ -55,6 +55,8 @@ def basic_setup(
     -------
     log : logging.Logger
     """
+#     if 
+    
     log = logging.getLogger(name)
     logging.basicConfig(format=format, datefmt=datefmt, level=level)
     return log
@@ -63,16 +65,16 @@ def basic_setup(
 class LazyStr:
     """
     Defer evaluation of str(some_func()).
-
+    
     The standard library Logging package defers string evaluation until the
     moment the LogRecord is actually created. By contrast, Python's 3.6+
     fstrings perform eager-evaluation of strings. If you were to call some_func
     within an fstring, it would be evaluated and then the string formatted. The
     Logging package performs the opposite operation... but how does that work
     with callables?
-
+    
     This is the problem LazyStr solves.
-
+    
     Attributes
     ----------
     fn : callable
@@ -82,7 +84,7 @@ class LazyStr:
         any position or keyword arguments to pass to fn
     """
     __slots__ = ('fn', 'args', 'kwargs')
-
+    
     def __init__(self, fn, *args, **kwargs):
         self.fn = fn
         self.args = args

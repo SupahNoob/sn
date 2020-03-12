@@ -1,43 +1,12 @@
 from typing import Optional
 
 from sqlalchemy.ext.declarative import declarative_base
-from pandas.tseries.offsets import (
-    MonthBegin, MonthEnd, QuarterBegin, QuarterEnd
-)
 from sqlalchemy import (
     Column, ForeignKey,
     Boolean, SmallInteger, Integer, Date, String
 )
-from pandas.tseries.holiday import (
-    get_calendar, AbstractHolidayCalendar, Holiday, nearest_workday,
-    USMartinLutherKingJr, USPresidentsDay, USMemorialDay, USLaborDay,
-    USColumbusDay, USThanksgivingDay
-)
 import sqlalchemy as sa
 import pandas as pd
-import numpy as np
-
-
-class USBusinessHolidayCalendar(AbstractHolidayCalendar):
-    """
-    A US Holiday calendar with adjustments for Corporate-Honored Holidays.
-    """
-    rules = [
-        Holiday('New Years Day', month=1, day=1),
-        Holiday('New Years Day Observed', month=1, day=1, observance=nearest_workday),
-        USMartinLutherKingJr,
-        USPresidentsDay,
-        USMemorialDay,
-        Holiday('July 4th', month=7, day=4),
-        Holiday('July 4th Observed', month=7, day=4, observance=nearest_workday),
-        USLaborDay,
-        USColumbusDay,
-        Holiday('Veterans Day', month=11, day=11),
-        Holiday('Veterans Day Observed', month=11, day=11, observance=nearest_workday),
-        USThanksgivingDay,
-        Holiday('Christmas', month=12, day=25),
-        Holiday('Christmas Observed', month=12, day=25, observance=nearest_workday),
-    ]
 
 
 Base = declarative_base()
@@ -45,7 +14,7 @@ Base = declarative_base()
 
 class BusinessCalendar(Base):
     """
-    Model for a standardized Date Dimension.
+    Model for a denormalized Date Dimension.
 
     NOTE:
         Since a calendar DATE cannot repeat, it is a perfect Natural Key. Some
@@ -87,7 +56,7 @@ class BusinessCalendar(Base):
     ) -> Optional[pd.DataFrame]:
         """
         Fills the database with data.
-
+        
         Parameters
         ----------
         start_date : str
@@ -95,7 +64,7 @@ class BusinessCalendar(Base):
 
         end_date : str
             ending DATE for the table in the format YYYY-MM-DD
-
+        
         engine : sqlalchemy.engine.Engine
             engine instance for INSERT of data into a database
 
@@ -129,7 +98,7 @@ class BusinessCalendar(Base):
                .pipe(BusinessCalendar._set_holidays)\
                .assign(is_business_day=lambda df: ~df.is_us_holiday & df.is_weekday)\
                .sort_values('calendar_date')
-
+        
         try:
             # TODO: currently this assumes the table has been created already
             with engine.connect() as conn:
